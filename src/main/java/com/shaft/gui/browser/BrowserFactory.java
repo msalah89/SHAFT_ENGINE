@@ -10,6 +10,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.windows.WindowsDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -84,7 +85,12 @@ public class BrowserFactory {
     public static boolean isWebExecution() {
         return !isMobileExecution();
     }
-
+    public static boolean isWinAppExecution() {
+        if (EXECUTION_ADDRESS != null && !"local".equals(EXECUTION_ADDRESS) && TARGET_PLATFORM_NAME != null) {
+            return !"".equals(TARGET_PLATFORM_NAME);
+        }
+        return false;
+    }
     public static boolean isMobileExecution() {
         if (EXECUTION_ADDRESS != null && !"local".equals(EXECUTION_ADDRESS) && TARGET_PLATFORM_NAME != null) {
             return !"".equals(TARGET_PLATFORM_NAME);
@@ -513,7 +519,9 @@ public class BrowserFactory {
         if (isMobileExecution()) {
             mobileDesiredCapabilities = setAppiumDesiredCapabilitiesList();
         }
-
+        if (isWinAppExecution()) {
+            mobileDesiredCapabilities = setAppiumDesiredCapabilitiesList();
+        }
         try {
             switch (browserType) {
                 case MOZILLA_FIREFOX:
@@ -560,6 +568,9 @@ public class BrowserFactory {
                         // will break in case of firefoxOS
                     }
                     break;
+                case DESKTOP_WINAPP:
+                    driver.set(new WindowsDriver(new URL(TARGET_HUB_URL), mobileDesiredCapabilities));
+
                 default:
                     failAction("Unsupported Browser Type [" + browserName + "].");
                     break;
@@ -668,6 +679,11 @@ public class BrowserFactory {
         if (isMobileWebExecution()) {
             internalBrowserName = System.getProperty("mobile_browserName");
         }
+        if (isWinAppExecution()){
+
+            internalBrowserName = System.getProperty("mobile_browserName");
+
+        }
         try {
             if (!isMobileNativeExecution()) {
                 checkBrowserOSCrossCompatibility(internalBrowserName);
@@ -751,7 +767,7 @@ public class BrowserFactory {
     public enum BrowserType {
         MOZILLA_FIREFOX("MozillaFirefox"), GOOGLE_CHROME("GoogleChrome"), APPLE_SAFARI("Safari"),
         MICROSOFT_IE("MicrosoftInternetExplorer"), MICROSOFT_EDGE("MicrosoftEdge"), MOBILE_CHROME("Chrome"),
-        MOBILE_CHROMIUM("Chromium"), MOBILE_BROWSER("Browser"), MOBILE_NATIVE("NativeMobileApp");
+        MOBILE_CHROMIUM("Chromium"), MOBILE_BROWSER("Browser"), MOBILE_NATIVE("NativeMobileApp"), DESKTOP_WINAPP("WinAppDriver");
 
         private final String value;
 

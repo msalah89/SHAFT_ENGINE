@@ -6,6 +6,7 @@ import com.shaft.gui.image.ScreenshotManager;
 import com.shaft.gui.video.RecordManager;
 import com.shaft.tools.io.ReportManager;
 import com.shaft.tools.support.JSHelpers;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.*;
@@ -298,6 +299,11 @@ public class BrowserActions {
      * @param driver the current instance of Selenium webdriver
      */
     public static synchronized void closeCurrentWindow(WebDriver driver) {
+        if (driver   instanceof AppiumDriver<?>)
+        {
+            driver.close();
+return;
+        }
         if (driver != null) {
             JavaScriptWaitManager.waitForLazyLoading();
             try {

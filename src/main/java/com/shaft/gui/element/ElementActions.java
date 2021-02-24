@@ -96,6 +96,32 @@ public class ElementActions {
     }
 
     /**
+     * Waits for the element to be clickable, and then right clicks and holds it
+     *
+     * @param driver         the current instance of Selenium webdriver
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     */
+    public static void contextClick(WebDriver driver, By elementLocator) {
+
+        By internalElementLocator = elementLocator;
+        if (identifyUniqueElement(driver, internalElementLocator)) {
+            // Override current locator with the aiGeneratedElementLocator
+            internalElementLocator = updateLocatorWithAIGeneratedOne(internalElementLocator);
+            if (Boolean.FALSE.equals(ElementActionsHelper.waitForElementToBeClickable(driver, internalElementLocator))) {
+                failAction(driver, "element is not clickable", internalElementLocator);
+            }
+            // wait for element to be clickable
+            passAction(driver, internalElementLocator,"Action : contextClick");
+            (new Actions(driver)).contextClick(driver.findElement(internalElementLocator)).build().perform();
+
+            // takes screenshot before holding the element
+        } else {
+            failAction(driver, internalElementLocator);
+        }
+    }
+
+    /**
      * Clicks on a certain element using Selenium WebDriver, or JavaScript
      *
      * @param driver         the current instance of Selenium webdriver
@@ -184,6 +210,80 @@ public class ElementActions {
     }
 
     /**
+     * Waits for the element to be clickable, and then Releases the depressed left mouse button, in the middle of the given element.
+     *
+     * @param driver         the current instance of Selenium webdriver
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     */
+    public static void release(WebDriver driver, By elementLocator) {
+        By internalElementLocator = elementLocator;
+        if (identifyUniqueElement(driver, internalElementLocator)) {
+            // Override current locator with the aiGeneratedElementLocator
+            internalElementLocator = updateLocatorWithAIGeneratedOne(internalElementLocator);
+            if (Boolean.FALSE.equals(ElementActionsHelper.waitForElementToBeClickable(driver, internalElementLocator))) {
+                failAction(driver, "element is not clickable", internalElementLocator);
+            }
+            // wait for element to be clickable
+            passAction(driver, internalElementLocator);
+            (new Actions(driver)).release(driver.findElement(internalElementLocator)).build().perform();
+
+            // takes screenshot before holding the element
+        } else {
+            failAction(driver, internalElementLocator);
+        }
+    }
+
+    /**
+     * Moves the mouse to an offset from the top-left corner of the element.
+     * The element is scrolled into view and its location is calculated using getBoundingClientRect.
+     *
+     * @param driver         the current instance of Selenium webdriver
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     */
+    public static void moveToElement(WebDriver driver, By elementLocator , int xOffset , int yOffset) {
+        By internalElementLocator = elementLocator;
+        if (identifyUniqueElement(driver, internalElementLocator)) {
+            // Override current locator with the aiGeneratedElementLocator
+            internalElementLocator = updateLocatorWithAIGeneratedOne(internalElementLocator);
+
+
+            passAction(driver, internalElementLocator);
+            (new Actions(driver)).moveToElement(driver.findElement(internalElementLocator),xOffset, yOffset).build().perform();
+
+            // takes screenshot before holding the element
+        } else {
+            failAction(driver, internalElementLocator);
+        }
+    }
+
+    /**
+     Moves the mouse to the middle of the element. The element is scrolled into view and its location is calculated using getBoundingClientRect.
+     *
+     * @param driver         the current instance of Selenium webdriver
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     */
+    public static void moveToElement(WebDriver driver, By elementLocator ) {
+        By internalElementLocator = elementLocator;
+        if (identifyUniqueElement(driver, internalElementLocator)) {
+            // Override current locator with the aiGeneratedElementLocator
+            internalElementLocator = updateLocatorWithAIGeneratedOne(internalElementLocator);
+
+
+            passAction(driver, internalElementLocator);
+            (new Actions(driver)).moveToElement(driver.findElement(internalElementLocator)).build().perform();
+
+            // takes screenshot before holding the element
+        } else {
+            failAction(driver, internalElementLocator);
+        }
+    }
+
+
+
+    /**
      * Attempts to perform a native clipboard action on the text from a certain web
      * element, like copy/cut/paste
      *
@@ -217,6 +317,7 @@ public class ElementActions {
             failAction(driver, internalElementLocator);
         }
     }
+
 
     /**
      * Double-clicks on an element using Selenium WebDriver's Actions Library
@@ -733,6 +834,8 @@ public class ElementActions {
         }
     }
 
+
+
     /**
      * Hovers over the hoverElements in sequence then clicks the clickableElement
      *
@@ -891,6 +994,9 @@ public class ElementActions {
         passAction(driver, internalElementLocator, keys.name());
     }
 
+    public static MouseActions performMouseActions(WebDriver driver) {
+        return new MouseActions(driver);
+    }
     public static SikuliActions performSikuliAction() {
         return new SikuliActions();
     }
@@ -1909,6 +2015,30 @@ public class ElementActions {
     }
 
     /**
+     * Waits for the element to be clickable, and then right clicks and holds it.
+     *
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     * @return a self-reference to be used to chain actions
+     */
+    public ElementActions contextClick(By elementLocator) {
+        contextClick(lastUsedDriver, elementLocator);
+        return this;
+    }
+
+    /**
+     * Waits for the element to be clickable, and then Releases the depressed left mouse button, in the middle of the given element.
+     *
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     * @return a self-reference to be used to chain actions
+     */
+    public ElementActions release(By elementLocator) {
+        release(lastUsedDriver, elementLocator);
+        return this;
+    }
+
+    /**
      * Attempts to perform a native clipboard action on the text from a certain web
      * element, like copy/cut/paste
      *
@@ -1934,6 +2064,32 @@ public class ElementActions {
         doubleClick(lastUsedDriver, elementLocator);
         return this;
     }
+
+
+    /**
+     * * Moves the mouse to an offset from the top-left corner of the element.
+     * The element is scrolled into view and its location is calculated using getBoundingClientRect.
+     *
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     */
+    public ElementActions moveToElement( By elementLocator , int xOffset , int yOffset) {
+
+        moveToElement(lastUsedDriver,elementLocator,xOffset,yOffset);
+        return this;
+    }
+
+    /**
+     Moves the mouse to the middle of the element. The element is scrolled into view and its location is calculated using getBoundingClientRect.
+     *
+     * @param elementLocator the locator of the webElement under test (By xpath, id,
+     *                       selector, name ...etc)
+     */
+    public ElementActions moveToElement( By elementLocator ) {
+        moveToElement(lastUsedDriver,elementLocator);
+        return this;
+    }
+
 
     /**
      * Drags the source element and drops it onto the destination element
